@@ -1,6 +1,6 @@
 import react, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Editor } from "../editor/editor";
+import { Editor } from "../components/editor/editor";
 import { useSessionStorage } from "../hooks/useSessionStorage";
 import { getKataById } from "../services/katasService";
 import { AxiosResponse } from "axios";
