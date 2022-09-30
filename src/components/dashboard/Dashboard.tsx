@@ -32,6 +32,8 @@ import Paper from "@mui/material/Paper";
 
 // List for the menu
 import MenuItems from "./MenuItems";
+import { NewEditor } from "../editor/NewEditor";
+import { TipTapEditor } from "../editor/TipTapEditor";
 
 // With for the drawer
 const drawerWidth: number = 240;
@@ -133,9 +135,7 @@ export const Dashboard = () => {
               </Badge>
             </IconButton>
             <IconButton color="inherit">
-              <Badge badgeContent={10} color="secondary">
-                <LogoutIcon />
-              </Badge>
+              <LogoutIcon />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -175,12 +175,11 @@ export const Dashboard = () => {
                   p: 2,
                   display: "flex",
                   flexDirection: "column",
-                  height: 240,
+                  height: 400,
                 }}
               >
-                <Typography component="h1" variant="h5">
-                  Dashboard
-                </Typography>
+                { <NewEditor /> }
+                {/* <TipTapEditor /> */}
               </Paper>
             </Grid>
           </Container>

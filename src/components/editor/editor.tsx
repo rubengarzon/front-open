@@ -5,9 +5,10 @@ import HighLight, { defaultProps } from "prism-react-renderer";
 interface EditorProps {
   language?: any;
   code?: any;
+  solution?: any;
 }
 
-export const Editor = ({ code, language }: EditorProps) => {
+export const Editor = ({ code, language, solution }: EditorProps) => {
   return (
     <HighLight {...defaultProps} code={code} language="typescript">
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
