@@ -34,6 +34,7 @@ import Paper from "@mui/material/Paper";
 import MenuItems from "./MenuItems";
 import { NewEditor } from "../editor/NewEditor";
 import { TipTapEditor } from "../editor/TipTapEditor";
+import { FileUploader } from "../uploader/FileUploader";
 
 // With for the drawer
 const drawerWidth: number = 240;
@@ -178,8 +179,9 @@ export const Dashboard = () => {
                   height: 400,
                 }}
               >
-                { <NewEditor /> }
+                {/* { <NewEditor /> } */}
                 {/* <TipTapEditor /> */}
+                <FileUploader />
               </Paper>
             </Grid>
           </Container>
