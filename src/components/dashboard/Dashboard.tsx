@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Theme personalization of Material UI
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 
 // CSS & Drawer
-import { CssBaseline } from "@mui/material";
+import { Alert, CssBaseline } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 
 // Nav bar
@@ -35,6 +35,7 @@ import MenuItems from "./MenuItems";
 import { NewEditor } from "../editor/NewEditor";
 import { TipTapEditor } from "../editor/TipTapEditor";
 import { FileUploader } from "../uploader/FileUploader";
+import { Link, useNavigate, useNavigation } from "react-router-dom";
 
 // With for the drawer
 const drawerWidth: number = 240;
@@ -91,14 +92,26 @@ const Drawer = styled(MuiDrawer, {
 
 // Define Theme
 const theme = createTheme();
+let token: string | null = "";
 
 // Dashboard
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(true);
+
+  useEffect(() => {
+    token = sessionStorage.getItem("token");
+  }, []);
 
   // Show / HIde the drawer
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
+    navigate("/login");
+    alert("Has cerrado sesión");
   };
 
   return (
@@ -135,9 +148,11 @@ export const Dashboard = () => {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton color="inherit">
-              <LogoutIcon />
-            </IconButton>
+            {token !== null ? (
+              <IconButton color="inherit" onClick={handleLogout}>
+                <LogoutIcon />
+              </IconButton>
+            ) : null}
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -179,9 +194,12 @@ export const Dashboard = () => {
                   height: 400,
                 }}
               >
+                <h1>¡Bienvenido!</h1>
+                <h2>¿Estás preparado?</h2>
+                <h5>Entrena tus habilidades de programación realizando katas</h5>
                 {/* { <NewEditor /> } */}
                 {/* <TipTapEditor /> */}
-                <FileUploader />
+                {/* <FileUploader /> */}
               </Paper>
             </Grid>
           </Container>

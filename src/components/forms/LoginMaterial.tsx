@@ -12,17 +12,41 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { login } from "../../services/authService";
+import { AxiosResponse } from "axios";
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme();
 
 export const LoginMaterial = () => {
+  const navigate = useNavigate();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const email = data.get("email")?.toString();
+    const password = data.get("password")?.toString();
+
+    if (email && password) {
+      login(email, password)
+        .then(async (response: AxiosResponse) => {
+          if (response.status === 200) {
+            if (response.data.token) {
+              await sessionStorage.setItem("token", response.data.token);
+              await sessionStorage.setItem("email", email);
+              navigate("/katas");
+            } else {
+              throw new Error("Invalid token");
+            }
+          } else {
+            throw new Error("Invalid credentials");
+          }
+        })
+        .catch((error) => {
+          console.error(`[LOGIN ERROR]: Something went wrong: ${error}`);
+        });
+    } else {
+      console.error("ERROR: Email o contraseña vacíos");
+    }
   };
 
   return (
@@ -41,7 +65,7 @@ export const LoginMaterial = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Inicio de sesión
           </Typography>
           <Box
             component="form"
@@ -54,7 +78,7 @@ export const LoginMaterial = () => {
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="Email"
               name="email"
               autoComplete="email"
               autoFocus
@@ -64,14 +88,14 @@ export const LoginMaterial = () => {
               required
               fullWidth
               name="password"
-              label="Password"
+              label="Contraseña"
               type="password"
               id="password"
               autoComplete="current-password"
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              label="Recordar"
             />
             <Button
               type="submit"
@@ -79,17 +103,17 @@ export const LoginMaterial = () => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Iniciar Sesión
             </Button>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
-                  Forgot password?
+                  ¿Olvidaste la constraseña?
                 </Link>
               </Grid>
               <Grid item>
                 <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                  {"¿No tienes una cuenta? Regístrate"}
                 </Link>
               </Grid>
             </Grid>

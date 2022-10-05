@@ -6,7 +6,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 
 export const menuItems = (
   <React.Fragment>
-    <ListItemButton>
+    <ListItemButton href="/katas">
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>

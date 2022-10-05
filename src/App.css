@@ -13,7 +13,6 @@
   }
 }
 
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -27,6 +26,16 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.katasContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.cardActionCenter {
+  display: flex;
+  justify-content: center;
 }
 
 @keyframes App-logo-spin {

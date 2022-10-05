@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import CreateKataPage from "../pages/CreateKataPage";
 import HomePage from "../pages/HomePage";
 import KatasDetailPage from "../pages/KatasDetailPage";
 import KatasPage from "../pages/KatasPage";
@@ -12,6 +13,7 @@ export const AppRoutes = () => {
       <Route path="login" element={<LoginPage />} />
       <Route path="register" element={<RegisterPage />} />
       <Route path="katas" element={<KatasPage />} />
+      <Route path="createKata" element={<CreateKataPage />} />
       <Route path="/katas/:id" element={<KatasDetailPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

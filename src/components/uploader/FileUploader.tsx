@@ -33,6 +33,10 @@ export const FileUploader = () => {
     console.log("list cleaned", files);
   };
 
+  const handleUpload = (response: any) => {
+    console.log("uploading files", files);
+  };
+
   return (
     <div>
       <Dropzone
@@ -41,11 +45,12 @@ export const FileUploader = () => {
         value={files}
         minHeight="195px"
         maxFiles={5}
-        url="http://localhost:8000/api/upload"
+        url="http://localhost:8000/api/katas/uploadFile"
         style={{ minWidth: "505px" }}
         label="Drag'n drop files here or click to browse"
         maxFileSize={2998000}
         disableScroll
+        onUploadFinish={handleUpload}
       >
         {files.map((file: FileValidated) => (
           <FileItem
