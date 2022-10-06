@@ -82,3 +82,29 @@ export const updateUser = async (user: any, id: string) => {
   };
   return axios.put(`users`, user, options);
 };
+
+export const deleteKata = async (id: string, token: string) => {
+  // http://localhost:8000/api/katas
+  const options: AxiosRequestConfig = {
+    headers: {
+      "x-access-token": token,
+    },
+    params: {
+      id: id,
+    },
+  };
+  return axios.delete(`katas`, options);
+};
+
+export const updateKata = async (kata: any, id: string, token: string) => {
+  // http://localhost:8000/api/katas
+  const options: AxiosRequestConfig = {
+    headers: {
+      "x-access-token": token,
+    },
+    params: {
+      id: id,
+    },
+  };
+  return axios.put(`katas`, kata, options);
+};

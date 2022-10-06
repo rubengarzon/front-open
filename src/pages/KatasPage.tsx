@@ -47,6 +47,8 @@ import Button from "@mui/material/Button";
 
 import { useSessionStorage } from "../hooks/useSessionStorage";
 
+import { deleteKata } from "../services/katasService";
+
 // With for the drawer
 const drawerWidth: number = 240;
 
@@ -140,10 +142,43 @@ export const KatasPage = () => {
 
   /**
    * Function to navigate to the kata detail page
-   * @param id  - id of the kata
+   * @param _id  - id of the kata
    */
-  const navigateToKataDetail = (id: number) => {
-    navigate(`/katas/${id}`);
+  const navigateToKataDetail = (_id: number) => {
+    navigate(`/katas/${_id}`);
+  };
+  const getKatas = () => {
+    getUserByEmail(token, email)
+      .then((response: AxiosResponse) => {
+        getKatasFromUser(token, response.data._id).then((response) => {
+          setKatas(response.data.katas);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  /**
+   * Function navigate to edit kata
+   * @param _id  - id of the kata
+   */
+  const editKata = (_id: any) => {
+    navigate(`/editKata/${_id}`);
+  };
+
+  /**
+   * Function to delete a kata
+   * @param _id  - id of the kata
+   */
+  const borrarKata = (_id: any) => {
+    deleteKata(_id, token)
+      .then((response) => {
+        alert("Kata borrada");
+        getKatas();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const levelSpanish = (level: string) => {
@@ -256,8 +291,23 @@ export const KatasPage = () => {
                         </Typography>
                       </CardContent>
                       <CardActions className="cardActionCenter">
-                        <Button size="small">Editar</Button>
-                        <Button size="small">Leer más</Button>
+                        <Button size="small" onClick={() => editKata(kata._id)}>
+                          Editar
+                        </Button>
+                        <Button
+                          size="small"
+                          color="error"
+                          onClick={() => borrarKata(kata._id)}
+                        >
+                          Borrar
+                        </Button>
+                        <Button
+                          size="small"
+                          color="success"
+                          onClick={() => navigateToKataDetail(kata._id)}
+                        >
+                          Leer más
+                        </Button>
                       </CardActions>
                     </Card>
                   </Grid>
