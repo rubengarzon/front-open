@@ -1,7 +1,11 @@
 import react, { useEffect, useState } from "react";
 import { resolvePath, useNavigate } from "react-router-dom";
 
-import { getKatasFromUser, getUserByEmail } from "../services/katasService";
+import {
+  getKatasFromUser,
+  getUserByEmail,
+  getAllKatas,
+} from "../services/katasService";
 import { AxiosResponse } from "axios";
 import { IKata } from "../utils/types/IKata.type";
 
@@ -128,15 +132,17 @@ export const KatasPage = () => {
     if (!loggedIn) {
       navigate("/login");
     } else {
-      getUserByEmail(token, email)
-        .then((response: AxiosResponse) => {
+      getUserByEmail(token, email).then((response: AxiosResponse) => {
+        if (response.data.rol === "usuario") {
           getKatasFromUser(token, response.data._id).then((response) => {
             setKatas(response.data.katas);
           });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        } else {
+          getAllKatas(token).then((response) => {
+            setKatas(response.data.katas);
+          });
+        }
+      });
     }
   }, [loggedIn, navigate, token, email]);
 

@@ -12,17 +12,35 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { register } from "../../services/authService";
+import { useNavigate } from "react-router";
 
 const theme = createTheme();
 
 export const RegisterMaterial = () => {
+  const navigate = useNavigate();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const email = data.get("email")?.toString();
+    const password = data.get("password")?.toString();
+    const name = data.get("name")?.toString();
+    const age = Number(data.get("age")?.toString());
+    if (
+      email !== undefined &&
+      password !== undefined &&
+      name !== undefined &&
+      age !== undefined
+    ) {
+      register(name, email, password, age)
+        .then((res) => {
+          alert("Usuario registrado");
+          navigate("/");
+        })
+        .catch((err) => {
+          alert("Error al registrar usuario");
+        });
+    }
   };
 
   return (
