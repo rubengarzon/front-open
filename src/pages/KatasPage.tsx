@@ -5,6 +5,7 @@ import {
   getKatasFromUser,
   getUserByEmail,
   getAllKatas,
+  updateUser,
 } from "../services/katasService";
 import { AxiosResponse } from "axios";
 import { IKata } from "../utils/types/IKata.type";
@@ -52,6 +53,7 @@ import Button from "@mui/material/Button";
 import { useSessionStorage } from "../hooks/useSessionStorage";
 
 import { deleteKata } from "../services/katasService";
+import userEvent from "@testing-library/user-event";
 
 // With for the drawer
 const drawerWidth: number = 240;
@@ -114,6 +116,7 @@ export const KatasPage = () => {
 
   const navigate = useNavigate();
   const [open, setOpen] = useState(true);
+  const [rol, setRol] = useState("");
 
   // Show / HIde the drawer
   const toggleDrawer = () => {
@@ -133,6 +136,7 @@ export const KatasPage = () => {
       navigate("/login");
     } else {
       getUserByEmail(token, email).then((response: AxiosResponse) => {
+        setRol(response.data.rol);
         if (response.data.rol === "usuario") {
           getKatasFromUser(token, response.data._id).then((response) => {
             setKatas(response.data.katas);
@@ -153,10 +157,19 @@ export const KatasPage = () => {
   const navigateToKataDetail = (_id: number) => {
     navigate(`/katas/${_id}`);
   };
-  const getKatas = () => {
+  const updateKatas = (idKataDelete: any) => {
     getUserByEmail(token, email)
       .then((response: AxiosResponse) => {
+        const user = response.data;
+        const id = response.data._id;
         getKatasFromUser(token, response.data._id).then((response) => {
+          user.katas = [];
+          response.data.katas.forEach((kata: IKata) => {
+            if (kata._id !== idKataDelete) {
+              user.katas.push(kata._id);
+            }
+          });
+          updateUser(user, id);
           setKatas(response.data.katas);
         });
       })
@@ -180,7 +193,7 @@ export const KatasPage = () => {
     deleteKata(_id, token)
       .then((response) => {
         alert("Kata borrada");
-        getKatas();
+        updateKatas(_id);
       })
       .catch((error) => {
         console.log(error);
@@ -227,6 +240,9 @@ export const KatasPage = () => {
                 sx={{ flexGrow: 1 }}
               >
                 Code Verification Katas
+              </Typography>
+              <Typography component="p" color="inherit" noWrap sx={{}}>
+                {rol === "usuario" ? "Usuario" : "Admin"}
               </Typography>
               <IconButton color="inherit">
                 <Badge badgeContent={10} color="secondary">
@@ -297,6 +313,13 @@ export const KatasPage = () => {
                         </Typography>
                       </CardContent>
                       <CardActions className="cardActionCenter">
+                        <Button
+                          size="small"
+                          color="success"
+                          onClick={() => navigateToKataDetail(kata._id)}
+                        >
+                          Ver
+                        </Button>
                         <Button size="small" onClick={() => editKata(kata._id)}>
                           Editar
                         </Button>
@@ -306,13 +329,6 @@ export const KatasPage = () => {
                           onClick={() => borrarKata(kata._id)}
                         >
                           Borrar
-                        </Button>
-                        <Button
-                          size="small"
-                          color="success"
-                          onClick={() => navigateToKataDetail(kata._id)}
-                        >
-                          Leer más
                         </Button>
                       </CardActions>
                     </Card>

@@ -105,7 +105,9 @@ const Drawer = styled(MuiDrawer, {
 const theme = createTheme();
 export const EditKataPage = () => {
   const token = useSessionStorage("token");
+  const email = useSessionStorage("email");
   const [open, setOpen] = useState(true);
+  const [rol, setRol] = useState("");
   const [kata, setKata] = useState<any>({
     name: "",
     description: "",
@@ -118,12 +120,15 @@ export const EditKataPage = () => {
   const { id } = useParams();
 
   useEffect(() => {
+    getUserByEmail(token, email).then((res) => {
+      setRol(res.data.rol);
+    });
     if (id !== undefined) {
       getKataById(token, id).then((kata: any) => {
         setKata(kata.data);
       });
     }
-  }, [id, token]);
+  }, [id, token, email]);
 
   // Show / HIde the drawer
   const toggleDrawer = () => {
@@ -145,203 +150,206 @@ export const EditKataPage = () => {
     alert("Has cerrado sesión");
   };
   return (
-      <ThemeProvider theme={theme}>
-        <Box sx={{ display: "flex" }}>
-          <CssBaseline />
-          <AppBar position="absolute" open={open}>
-            <Toolbar sx={{ pr: "24px" }}>
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                onClick={toggleDrawer}
-                sx={{
-                  marginRight: "36px",
-                  ...(open && {
-                    display: "none",
-                  }),
-                }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography
-                component="h1"
-                variant="h6"
-                color="inherit"
-                noWrap
-                sx={{ flexGrow: 1 }}
-              >
-                Code Verification Katas
-              </Typography>
-              <IconButton color="inherit">
-                <Badge badgeContent={10} color="secondary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-              {token !== null ? (
-                <IconButton color="inherit" onClick={handleLogout}>
-                  <LogoutIcon />
-                </IconButton>
-              ) : null}
-            </Toolbar>
-          </AppBar>
-          <Drawer variant="permanent" open={open}>
-            <Toolbar
+    <ThemeProvider theme={theme}>
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar position="absolute" open={open}>
+          <Toolbar sx={{ pr: "24px" }}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={toggleDrawer}
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                px: [1],
+                marginRight: "36px",
+                ...(open && {
+                  display: "none",
+                }),
               }}
             >
-              <IconButton color="inherit" onClick={toggleDrawer}>
-                <ChevronLeftIcon />
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1 }}
+            >
+              Code Verification Katas
+            </Typography>
+            <Typography component="p" color="inherit" noWrap sx={{}}>
+              {rol === "usuario" ? "Usuario" : "Admin"}
+            </Typography>
+            <IconButton color="inherit">
+              <Badge badgeContent={10} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            {token !== null ? (
+              <IconButton color="inherit" onClick={handleLogout}>
+                <LogoutIcon />
               </IconButton>
-            </Toolbar>
-            <Divider />
-            <List component="nav">{MenuItems}</List>
-          </Drawer>
-          <Box
-            component="main"
+            ) : null}
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <Toolbar
             sx={{
-              backgroundColor: (theme) =>
-                theme.palette.mode === "light"
-                  ? theme.palette.grey[100]
-                  : theme.palette.grey[900],
-              flexGrow: 1,
-              height: "100vh",
-              overflow: "auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              px: [1],
             }}
           >
-            <Toolbar />
-            <Container maxWidth="lg" sx={{ mt: 4, mg: 4 }}>
-              <Grid item xs={12} md={12} lg={12}>
-                <Paper
+            <IconButton color="inherit" onClick={toggleDrawer}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </Toolbar>
+          <Divider />
+          <List component="nav">{MenuItems}</List>
+        </Drawer>
+        <Box
+          component="main"
+          sx={{
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light"
+                ? theme.palette.grey[100]
+                : theme.palette.grey[900],
+            flexGrow: 1,
+            height: "100vh",
+            overflow: "auto",
+          }}
+        >
+          <Toolbar />
+          <Container maxWidth="lg" sx={{ mt: 4, mg: 4 }}>
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper
+                sx={{
+                  p: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  height: 610,
+                }}
+              >
+                <Box
                   sx={{
-                    p: 2,
+                    marginTop: 1,
                     display: "flex",
                     flexDirection: "column",
-                    height: 610,
+                    alignItems: "center",
                   }}
                 >
+                  <Typography component="h1" variant="h5">
+                    Editar Kata
+                  </Typography>
                   <Box
-                    sx={{
-                      marginTop: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
+                    component="form"
+                    noValidate
+                    sx={{ mt: 1 }}
+                    onSubmit={handleSubmit}
                   >
-                    <Typography component="h1" variant="h5">
-                      Editar Kata
-                    </Typography>
-                    <Box
-                      component="form"
-                      noValidate
-                      sx={{ mt: 1 }}
-                      onSubmit={handleSubmit}
-                    >
-                      <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="name"
-                        label="Nombre"
-                        name="name"
-                        value={kata?.name}
-                        onChange={(e) =>
-                          setKata({ ...kata, name: e.target.value })
-                        }
-                        autoComplete="name"
-                        autoFocus
-                      />
-                      <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="description"
-                        label="Descripción"
-                        type="description"
-                        id="description"
-                        value={kata?.description}
-                        onChange={(e) =>
-                          setKata({ ...kata, description: e.target.value })
-                        }
-                        autoComplete="current-description"
-                      />
-                      <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="intents"
-                        label="Intentos"
-                        type="number"
-                        id="intents"
-                        value={kata?.intents}
-                        onChange={(e) =>
-                          setKata({ ...kata, intents: e.target.value })
-                        }
-                        autoComplete="current-intents"
-                      />
-                      <FormControl fullWidth>
-                        <InputLabel id="nivelLabel">Nivel</InputLabel>
-                        <Select
-                          labelId="nivelLabel"
-                          id="level"
-                          value={kata?.level}
-                          label="Nivel"
-                          onChange={(e) => {
-                            setKata({ ...kata, nivel: e.target.value });
-                          }}
-                        >
-                          <MenuItem value="Basic">Básico</MenuItem>
-                          <MenuItem value="Medium">Medio</MenuItem>
-                          <MenuItem value="High">Avanzado</MenuItem>
-                        </Select>
-                      </FormControl>
-                      <Box>
-                        <Rating
-                          name="stars"
-                          id="stars"
-                          value={kata?.stars}
-                          onChange={(e) => {
-                            setKata({
-                              ...kata,
-                              stars: e.currentTarget.getAttribute("value"),
-                            });
-                          }}
-                        />
-                      </Box>
-                      <TextField
-                        id="solution"
-                        name="solution"
-                        label="Solución"
-                        multiline
-                        rows={4}
-                        value={kata?.solution}
-                        onChange={(e) =>
-                          setKata({ ...kata, solution: e.target.value })
-                        }
-                      />
-                      <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="name"
+                      label="Nombre"
+                      name="name"
+                      value={kata?.name}
+                      onChange={(e) =>
+                        setKata({ ...kata, name: e.target.value })
+                      }
+                      autoComplete="name"
+                      autoFocus
+                    />
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      name="description"
+                      label="Descripción"
+                      type="description"
+                      id="description"
+                      value={kata?.description}
+                      onChange={(e) =>
+                        setKata({ ...kata, description: e.target.value })
+                      }
+                      autoComplete="current-description"
+                    />
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      name="intents"
+                      label="Intentos"
+                      type="number"
+                      id="intents"
+                      value={kata?.intents}
+                      onChange={(e) =>
+                        setKata({ ...kata, intents: e.target.value })
+                      }
+                      autoComplete="current-intents"
+                    />
+                    <FormControl fullWidth>
+                      <InputLabel id="nivelLabel">Nivel</InputLabel>
+                      <Select
+                        labelId="nivelLabel"
+                        id="level"
+                        value={kata?.level}
+                        label="Nivel"
+                        onChange={(e) => {
+                          setKata({ ...kata, nivel: e.target.value });
+                        }}
                       >
-                        Editar
-                      </Button>
+                        <MenuItem value="Basic">Básico</MenuItem>
+                        <MenuItem value="Medium">Medio</MenuItem>
+                        <MenuItem value="High">Avanzado</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <Box>
+                      <Rating
+                        name="stars"
+                        id="stars"
+                        value={kata?.stars}
+                        onChange={(e) => {
+                          setKata({
+                            ...kata,
+                            stars: e.currentTarget.getAttribute("value"),
+                          });
+                        }}
+                      />
                     </Box>
+                    <TextField
+                      id="solution"
+                      name="solution"
+                      label="Solución"
+                      multiline
+                      rows={4}
+                      value={kata?.solution}
+                      onChange={(e) =>
+                        setKata({ ...kata, solution: e.target.value })
+                      }
+                    />
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      sx={{ mt: 3, mb: 2 }}
+                    >
+                      Editar
+                    </Button>
                   </Box>
-                  {/* { <NewEditor /> } */}
-                  {/* <TipTapEditor /> */}
-                  {/* <FileUploader /> */}
-                </Paper>
-              </Grid>
-            </Container>
-          </Box>
+                </Box>
+                {/* { <NewEditor /> } */}
+                {/* <TipTapEditor /> */}
+                {/* <FileUploader /> */}
+              </Paper>
+            </Grid>
+          </Container>
         </Box>
-      </ThemeProvider>
+      </Box>
+    </ThemeProvider>
   );
 };
 

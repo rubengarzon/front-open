@@ -36,6 +36,7 @@ import { NewEditor } from "../editor/NewEditor";
 import { TipTapEditor } from "../editor/TipTapEditor";
 import { FileUploader } from "../uploader/FileUploader";
 import { Link, useNavigate, useNavigation } from "react-router-dom";
+import { getUserByEmail } from "../../services/katasService";
 
 // With for the drawer
 const drawerWidth: number = 240;
@@ -93,15 +94,23 @@ const Drawer = styled(MuiDrawer, {
 // Define Theme
 const theme = createTheme();
 let token: string | null = "";
+let email: any = "";
 
 // Dashboard
 export const Dashboard = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(true);
+  const [rol, setRol] = useState("");
 
   useEffect(() => {
     token = sessionStorage.getItem("token");
-  }, []);
+    email = sessionStorage.getItem("email");
+    if (token !== null) {
+      getUserByEmail(token, email).then((res) => {
+        setRol(res.data.rol);
+      });
+    }
+  }, [rol]);
 
   // Show / HIde the drawer
   const toggleDrawer = () => {
@@ -142,6 +151,9 @@ export const Dashboard = () => {
               sx={{ flexGrow: 1 }}
             >
               Code Verification Katas
+            </Typography>
+            <Typography component="p" color="inherit" noWrap sx={{}}>
+              {rol === "usuario" ? "Usuario" : "Admin"}
             </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={10} color="secondary">
@@ -196,7 +208,9 @@ export const Dashboard = () => {
               >
                 <h1>¡Bienvenido!</h1>
                 <h2>¿Estás preparado?</h2>
-                <h5>Entrena tus habilidades de programación realizando katas</h5>
+                <h5>
+                  Entrena tus habilidades de programación realizando katas
+                </h5>
                 {/* { <NewEditor /> } */}
                 {/* <TipTapEditor /> */}
                 {/* <FileUploader /> */}
