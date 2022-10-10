@@ -16,7 +16,6 @@ const styles: any = {
   root: {
     boxSizing: "border-box",
     fontFamily: '"Fira code", "Fira Mono", monospace',
-    height: "100%",
     ...theme.plain,
   },
 };
